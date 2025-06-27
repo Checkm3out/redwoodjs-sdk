@@ -29,12 +29,21 @@ interface Secret {
 }
 
 const promptForDeployment = async (): Promise<boolean> => {
+
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
   return new Promise((resolve) => {
+
+    // Catch ctrl-c
+    rl.on('SIGINT', () => {
+      rl.close();
+      console.log('\nDeployment cancelled.');
+      process.exit(1);
+    });
+
     rl.question("Do you want to proceed with deployment? (y/N): ", (answer) => {
       rl.close();
       resolve(answer.toLowerCase() === "y");
